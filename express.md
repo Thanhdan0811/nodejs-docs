@@ -94,4 +94,16 @@ app.use("/", (req, res, next) => {
 ```
 
 - console.log(res.body) => { title: '14213213' 
+# Middleware for POST request.
+- Ta dùng app.post để chỉ chạy route cho post
+
+```
+app.post("/product", (req, res, next) => {
+  console.log(req.body);
+  res.redirect("/");
+});
+
+```
+
+# Express Router
 
