@@ -203,4 +203,14 @@ router.get("/add-product", (req, res, next) => {
 
 ```
 
+# Serving files Statically
+- staticlly có nghĩa là sẽ không bị express xử lý như là routes.
+- Sẽ được xem là file system.
 
+```
+  app.use(express.static(path.join(__dirname, 'public')));
+  
+  => <link rel="stylesheet" href="/css/main.css">
+```
+
+- 
