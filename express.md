@@ -107,3 +107,100 @@ app.post("/product", (req, res, next) => {
 
 # Express Router
 
+- admin.js
+```
+  const express = require("express");
+
+const Router = express.Router();
+
+router.get("/add-product", (req, res, next) => {
+  res.send(`
+    <form action="/product" method="POST">
+      <input type="text" name="title" />
+      <button type="submit">Add product</button>
+    </form>
+  `);
+});
+
+router.post("/product", (req, res, next) => {
+  console.log(req.body);
+  res.redirect("/");
+});
+
+module.exports = router;  
+  
+```
+
+- app.js
+```
+  const app = express();
+
+  const adminRoutes = require("./routes/admin");
+  const shopRoutes = require("./routes/shop");
+
+  app.use(bodyParser.urlencoded({ extended: false }));
+
+  app.use(adminRoutes);
+  app.use(shopRoutes);
+
+app.listen(3000);
+```
+
+- NOTE : ở dây ta dùng router.get, router.post sẽ check exact match cho route, 
+
+# Filtering Path 
+
+```
+app.use(shopRoutes);
+app.use("/admin", adminRoutes);
+
+```
+
+- các path trong admin sẽ bắt đầu với /admin.
+
+# HTMLL file , sendFFile
+- path tron nodejs sẽ chỉ đến os , "/views" từ os tìm views.
+- Ta sẽ dùng path và __dirname trong node.
+
+```
+
+const path = require('path');
+const express = require("express");
+const router = express.Router();
+
+router.get("/", (req, res, next) => {
+  // res.send(`
+  //   <h1>Hello from Express</h1>
+  // `);
+  res.sendFile(path.join(__dirname, ',,/' ,'views', 'shop.html'));
+});
+
+module.exports = router;
+
+```
+- Dùng path.join để xử lý case là \ hoặc / trong path đối với máy window.
+- __dirname trả về path của file đagn dùng nó.
+
+
+# Helper function path
+
+- path.js
+```
+  const path = require("path");
+  // module.exports = path.dirname(process.mainModule.filename);
+  module.exports = path.dirname(require.main.filename);
+
+```
+
+- admin.js
+```
+const rootDir = require("../utils/path");
+
+router.get("/add-product", (req, res, next) => {
+  // res.sendFile(path.join(__dirname, "../", "views", "add-product.html"));
+  res.sendFile(path.join(rootDir, "views", "add-product.html"));
+});
+
+```
+
+
