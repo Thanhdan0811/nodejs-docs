@@ -44,3 +44,31 @@ exports.getProduct = (req, res, next) => {
 
 - product trong for sẽ là biến của for không thể truyền xuống file của inclue.
 - Ta sẽ cần truyền tham số vào include như ví dụ trên.
+
+# Query Params path 
+
+- Đối với path có dạng : /admin/edit-product/12412?edit=true
+- ta sẽ dùng req.query.edit
+
+```
+
+exports.getEditProduct = (req, res, next) => {
+  // edit-product/42123?edit=true
+  const editMode = req.query.edit;
+  if (!editMode) {
+    res.redirect("/");
+  }
+  res.render('admin/edit-product', { 
+    pageTitle: 'Edit Product',
+    path: '/admin/edit-product',
+    editing: editMode,
+  });
+};
+
+// trong file routes
+
+router.get('/edit-product/:productId', adminController.getEditProduct);
+
+```
+
+
