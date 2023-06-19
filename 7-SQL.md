@@ -14,4 +14,6 @@
 # Horizontal and Vertical Scaling.
 - Horizontal Scaling : Add more server. And merge data into 1 database.
 - Vertical Scaling : improve Server Capacity / Hardware.
-- 
+
+# Install SQL
+- npm i mysql2
