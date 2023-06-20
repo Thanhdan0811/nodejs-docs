@@ -70,7 +70,56 @@ module.exports = sequelize;
 
 ```
 
-- 
+- Tạo model :
+
+```
+const Sequelize = require("sequelize");
+
+// được khởi tạo như ở trên.
+const sequelize = require("../util/database");
+
+const Product = sequelize.define("product", {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  title: Sequelize.STRING,
+  price: {
+    type: Sequelize.DOUBLE,
+    allowNull: false,
+  },
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
+
+module.exports = Product;
+
+```
+
+- ở app.js
+```
+const sequelize = require("./util/database");
+
+sequelize
+  .sync()
+  .then((result) => {
+    app.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+```
+
+
 
 
 
