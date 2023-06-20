@@ -119,7 +119,30 @@ sequelize
 
 ```
 
+# Associations
+- Mối liên hệ giữa các model với nhau.
+- Product có thể thuộc nhiều Cart hay User có nhiều product.
+- Để tạo associations : fiel app.js
+```
+  const User = require("./models/user");
+  const Product = require("./models/product");
 
+  Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
+  User.hasMany(Product);
+
+  sequelize
+  .sync({force: true})
+  .then((result) => {
+    app.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+```
+
+- force sẽ khi đề cái hiện tại , bỏ đi khi đã ghi đè.
+- Lưu ý : sequelize sẽ chỉ chạy khi khởi tạo, chứ ko chạy mỗi khi req đến.
+- 
 
 
 
