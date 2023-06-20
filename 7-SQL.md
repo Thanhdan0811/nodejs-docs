@@ -17,3 +17,65 @@
 
 # Install SQL
 - npm i mysql2
+- mysql.createPool : quản lý nhiều connections.
+-  set up mysql2 :
+
+```
+  // database.js
+  const mysql = require('mysql2');
+
+  const pool = mysql.createPool({
+    host: 'localhost',
+    use: 'root',
+    database: 'node_basic',
+    password: '123456'
+  });
+  
+  module.exports = pool.promise();
+
+  // app.js
+  const db = require("./util/database");
+  // Db
+  db.execute('SELECT * FROM products')
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+```
+
+# Sequelize
+- Là 1 thư viện Object-Relational Mapping Library.
+- Thay vì viết các câu lệnh queries ta sẽ dùng js object.
+- Các định nghĩa :
+  + Model : class Product, User
+  + Instance : new Product()
+  + Queries : User.findAll()
+  + Associations : User.hasMany(Product)
+
+ - Install : npm i sequelize
+
+```
+const Sequelize = require('sequelize');
+
+
+const sequelize = new Sequelize('node_basic', 'root', '123456', {
+  dialect: 'mysql',
+  host: 'localhost',
+});
+
+module.exports = sequelize;
+
+```
+
+- 
+
+
+
+
+
+
+
+
