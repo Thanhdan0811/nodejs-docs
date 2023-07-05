@@ -75,4 +75,22 @@ app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
 ```
 
 # Storing in Database.
+- Ta ko nên lưu trong database mà lưu path file dẫn đến file trong source.
+
+```
+const imageUrl = image.path;
+
+
+```
+
+# Served static file : 
+```
+/// app.js => express.static(path.join(__dirname, 'images') => xem folder images là staic
+/// images/nae_1.png => từ thư mục static là images/images tìm file có tên nae_1/png => lỗi. Ta sẽ thêm path /images ở trước.
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+/// ejs file ; product.imageUrl => images/nae_1.png
+<image src="/<%= product.imageUrl  %>" />
+
+```
 
