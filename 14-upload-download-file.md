@@ -94,3 +94,21 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 ```
 
+# Download file with authentication 
+
+```
+/// shop.js controller
+const orderId = req.params.orderId;
+const invoiceName = 'invoice-' + orderId + '.pdf';
+const invoicePath = path.join('data', 'invoices', invoiceName);
+fs.readFile(invoicePath, (err, data) => {
+  if(err) {
+    return next(err);
+  }
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+  res.send(data);
+});
+```
+- inline or attachment.
+- 
