@@ -97,8 +97,16 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 # Download file with authentication 
 
 ```
-/// shop.js controller
+/// shop.js controller getInvoice.
 const orderId = req.params.orderId;
+Order.fincById(orderId).then(order => {
+  if(!order) {
+    return next(new Error("No order found"));
+  }
+  if(order.user.userId.toString() !== req.user._id.toString()) {
+      return next(new Error("Unauthoized"));
+  }
+})
 const invoiceName = 'invoice-' + orderId + '.pdf';
 const invoicePath = path.join('data', 'invoices', invoiceName);
 fs.readFile(invoicePath, (err, data) => {
@@ -110,5 +118,99 @@ fs.readFile(invoicePath, (err, data) => {
   res.send(data);
 });
 ```
-- inline or attachment.
-- 
+- inline (open inline) or attachment  .
+- Content-Disposition : diễn tả cách mà content đc server đối với client.
+
+# Streaming data and Preloading Data.
+
+```
+/// shop.js controller getInvoice.
+const orderId = req.params.orderId;
+Order.fincById(orderId).then(order => {
+  if(!order) {
+    return next(new Error("No order found"));
+  }
+  if(order.user.userId.toString() !== req.user._id.toString()) {
+      return next(new Error("Unauthoized"));
+  }
+})
+const invoiceName = 'invoice-' + orderId + '.pdf';
+const invoicePath = path.join('data', 'invoices', invoiceName);
+const file = fs.createReadStream(invoicePath);
+res.setHeader('Content-Type', 'application/pdf');
+res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+res.send(data);
+file.pipe(res);
+
+```
+- createReadStream tạo stream data thay vì tải file nặng
+
+# using PDFKit for .pdf generation.
+- npm i pdfkit
+
+
+```
+/// Shop.js
+const pdfkit = require('pdfkit');
+
+///
+const orderId = req.params.orderId;
+Order.fincById(orderId).then(order => {
+  if(!order) {
+    return next(new Error("No order found"));
+  }
+  if(order.user.userId.toString() !== req.user._id.toString()) {
+      return next(new Error("Unauthoized"));
+  }
+})
+const invoiceName = 'invoice-' + orderId + '.pdf';
+const invoicePath = path.join('data', 'invoices', invoiceName);
+
+const pdfDoc = new pdfkit();
+res.setHeader('Content-Type', 'application/pdf');
+res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+pdfDoc.pipe(fs.createWriteStream(invoicePath));
+pdfDoc.pipe(res);
+
+pdfDoc.fontSize(26).text('Invoice', {
+  underline: true
+});
+
+
+
+ pdfDoc.text('============');
+  let totlaPrice = 0;
+order.products.forEach(prod => {
+totlaPrice += prod.quantity * prod.product.price;
+  pdfDoc.fontSize(14).text(prod.product.title + ' - ' + prod.quantity + ' x ' + prod.product.price);
+});
+
+pdfDoc.text('Total Price : $' + totalPrice);
+
+pdfDoc.end();
+
+```
+
+# Deleting file.
+
+
+```
+/// tạo file.js trong util
+const fs = require('fs');
+
+const deleteFile = (filePath) => {
+  fs.unlink(filePath, (err) => {
+      if(err) {
+        throw(err);
+      }
+  });
+}
+exports.deleteFile = deleteFile;
+
+/// admin controllers
+const fileHelper = require('.../util/file');
+
+fileHelper.deleteFile(product.imageUrl);
+
+
+```
