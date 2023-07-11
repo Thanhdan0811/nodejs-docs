@@ -254,4 +254,28 @@ fetch(url, {
 })
 
 ```
-  
+
+# Updating Post.
+- use put.
+
+```
+/// feed.js routes
+router.put('/post/:postId');
+
+/// feed.js controller.
+exports.updatePost = (req, res, next) => {
+    const postId = req.params.postId;
+    const title = req.body.title;
+    const content = req.body.content;
+    let imageUrl = req.body.image;
+    if(req.file) {
+        imageUrl = req.file.path;
+    }
+    if(!imageUrl) {
+        const error  new Error('No file picked');
+        error.statusCode = 42;
+        throw error;
+    }
+}
+
+```
