@@ -279,3 +279,94 @@ exports.updatePost = (req, res, next) => {
 }
 
 ```
+# Pagination 
+```
+
+const currentPage = req.query.page || 1;
+const perPage = 2;
+let totalItems;
+
+Post.find()
+    .countDocuments()
+    .then(count => {
+        totalItems = count;
+        return Post.find()
+                .skip((currentPage - 1) * perPage)
+                .limit(perPage)
+    })
+    .then(posts => {
+        res.status(200).json({message: "Fetched post seccessfully.", posts: posts, totalItems});
+    })
+```
+# Authentication 
+- Không như việc gửi view từ server, ở client side hoàn toàn tách biệt viết server.
+- Server sẽ tạo token để gửi đến client khi đăng nhập vào.
+- JSON data + Signature => JSON Web Token (JWT).
+- Signature sẽ chỉ có thể được verified bởi server.
+- npm i jsonwebtoken
+
+
+```
+const jwt = require('jsonwebtoken');
+const token = jwt.sign({email: loadedUser.email,
+                        userId: loadedUser._id.toString()
+                        }, 'somesupersecretsecret',
+                            { expiresIn: '1h' }
+                        )
+res.status(200).json({token: token, userId : loadedUser._id.toString()});
+```
+
+# Validation Token
+
+```
+/// FE
+fetch(url , {
+    headers: {
+        Authorization: 'Bearer ' + this.props.token
+    }
+})
+
+/// is-auth.js middleware
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+    const authHeader = req.get('Authorization');
+    if(!authHeader) {
+        const error = new Error('Not authenticated');
+        error.statusCode = 401;
+        throw error;
+    }
+    const token = req.get('Authorization').split(' ')[1];
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(token, 'somesupersecretsecret');
+    } catch(err) {
+        err.statusCode = 500;
+        throw err;
+    }
+
+    if(!decodedToken) {
+        const error = new Error('Not Authenticated!');
+        error.statusCode = 401;
+        throw error;
+    }
+    req.userId = decodedToken.userId;
+    next();
+}
+
+/// feed.js
+const isAuth = require("../middleware/is-auth");
+
+
+```
+
+# Connect User and Post Model.
+
+# Remove Relation 
+
+```
+user.posts.pull(postId);
+user.save();
+
+```
