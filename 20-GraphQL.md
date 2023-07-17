@@ -357,7 +357,34 @@ app.put('/post-iamge', (req, res, next) => {
 
 ```
 
+# Using Variables.
 
+
+```
+/// FE
+const graphqlQuery = {
+  query : `
+    query FetchPost($page: Int) {
+      posts(page: $page) {
+        _id
+        title
+        content
+        imageUrl
+        creator {
+          name
+        }
+        createdAt
+      }
+      totalPosts
+    }
+  `,  
+  variables : {
+    page: page
+  }
+}
+
+
+```
 
 
 
